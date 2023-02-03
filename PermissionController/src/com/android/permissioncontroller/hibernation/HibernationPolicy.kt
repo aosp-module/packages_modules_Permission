@@ -27,6 +27,9 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_IMMUTABLE
+import android.app.PendingIntent.FLAG_ONE_SHOT
+import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.app.admin.DeviceAdminReceiver
 import android.app.admin.DevicePolicyManager
 import android.app.job.JobInfo
@@ -41,17 +44,26 @@ import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import android.content.Intent.FLAG_RECEIVER_FOREGROUND
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.os.Build
 import android.os.Bundle
 import android.os.Process
+import android.os.SystemClock
 import android.os.UserHandle
 import android.os.UserManager
 import android.printservice.PrintService
 import android.provider.DeviceConfig
 import android.provider.DeviceConfig.NAMESPACE_APP_HIBERNATION
 import android.provider.Settings
+import android.safetycenter.SafetyCenterManager
+import android.safetycenter.SafetyEvent
+import android.safetycenter.SafetySourceData
+import android.safetycenter.SafetySourceIssue
+import android.safetycenter.SafetySourceIssue.Action
 import android.service.autofill.AutofillService
 import android.service.dreams.DreamService
 import android.service.notification.NotificationListenerService
@@ -59,9 +71,11 @@ import android.service.voice.VoiceInteractionService
 import android.service.wallpaper.WallpaperService
 import android.telephony.TelephonyManager.CARRIER_PRIVILEGE_STATUS_HAS_ACCESS
 import android.telephony.TelephonyManager.CARRIER_PRIVILEGE_STATUS_NO_ACCESS
+import android.text.Html
 import android.util.Log
 import android.view.inputmethod.InputMethod
 import androidx.annotation.MainThread
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import com.android.modules.utils.build.SdkLevel
@@ -85,16 +99,17 @@ import com.android.permissioncontroller.permission.data.get
 import com.android.permissioncontroller.permission.data.getUnusedPackages
 import com.android.permissioncontroller.permission.model.livedatatypes.LightPackageInfo
 import com.android.permissioncontroller.permission.service.revokeAppPermissions
+import com.android.permissioncontroller.permission.utils.KotlinUtils
 import com.android.permissioncontroller.permission.utils.StringUtils
 import com.android.permissioncontroller.permission.utils.Utils
 import com.android.permissioncontroller.permission.utils.forEachInParallel
+import java.util.Date
+import java.util.Random
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import java.util.Date
-import java.util.Random
-import java.util.concurrent.TimeUnit
 
 private const val LOG_TAG = "HibernationPolicy"
 const val DEBUG_OVERRIDE_THRESHOLDS = false
@@ -119,7 +134,18 @@ private fun getCheckFrequencyMs() = DeviceConfig.getLong(
         Utils.PROPERTY_HIBERNATION_CHECK_FREQUENCY_MILLIS,
         DEFAULT_CHECK_FREQUENCY_MS)
 
-private val PREF_KEY_FIRST_BOOT_TIME = "first_boot_time"
+// Intentionally kept value of the key same as before because we want to continue reading value of
+// this shared preference stored by previous versions of PermissionController
+const val PREF_KEY_START_TIME_OF_UNUSED_APP_TRACKING = "first_boot_time"
+const val PREF_KEY_BOOT_TIME_SNAPSHOT = "ah_boot_time_snapshot"
+const val PREF_KEY_ELAPSED_REALTIME_SNAPSHOT = "ah_elapsed_realtime_snapshot"
+
+private const val PREFS_FILE_NAME = "unused_apps_prefs"
+private const val PREF_KEY_UNUSED_APPS_REVIEW = "unused_apps_need_review"
+const val SNAPSHOT_UNINITIALIZED = -1L
+private const val ACTION_SET_UP_HIBERNATION =
+    "com.android.permissioncontroller.action.SET_UP_HIBERNATION"
+val ONE_DAY_MS = TimeUnit.DAYS.toMillis(1)
 
 fun isHibernationEnabled(): Boolean {
     return SdkLevel.isAtLeastS() &&
@@ -138,48 +164,134 @@ fun hibernationTargetsPreSApps(): Boolean {
 }
 
 /**
- * Receiver of the onBoot event.
+ * Remove the unused apps notification.
  */
-class HibernationOnBootReceiver : BroadcastReceiver() {
+fun cancelUnusedAppsNotification(context: Context) {
+    context.getSystemService(NotificationManager::class.java)!!.cancel(
+        HibernationJobService::class.java.simpleName,
+        Constants.UNUSED_APPS_NOTIFICATION_ID)
+}
 
-    override fun onReceive(context: Context, intent: Intent?) {
-        if (DEBUG_HIBERNATION_POLICY) {
-            DumpableLog.i(LOG_TAG, "scheduleHibernationJob " +
-                    "with frequency ${getCheckFrequencyMs()}ms " +
-                    "and threshold ${getUnusedThresholdMs()}ms")
-        }
+/**
+ * Checks if we need to show the safety center card and sends the appropriate source data. If
+ * the user has not reviewed the latest auto-revoked apps, we show the card. Otherwise, we ensure
+ * nothing is shown.
+ */
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+fun rescanAndPushDataToSafetyCenter(
+    context: Context,
+    sessionId: Long,
+    safetyEvent: SafetyEvent
+) {
+    val safetyCenterManager: SafetyCenterManager =
+        context.getSystemService(SafetyCenterManager::class.java)!!
+    if (getUnusedAppsReviewNeeded(context)) {
+        val seeUnusedAppsAction = Action.Builder(
+            Constants.UNUSED_APPS_SAFETY_CENTER_SEE_UNUSED_APPS_ID,
+            context.getString(R.string.unused_apps_safety_center_action_title),
+            makeUnusedAppsIntent(context, sessionId))
+            .build()
 
-        // Write first boot time if first boot
-        context.firstBootTime
+        val issue = SafetySourceIssue.Builder(
+            Constants.UNUSED_APPS_SAFETY_CENTER_ISSUE_ID,
+            context.getString(R.string.unused_apps_safety_center_card_title),
+            context.getString(R.string.unused_apps_safety_center_card_content),
+            SafetySourceData.SEVERITY_LEVEL_INFORMATION,
+            Constants.UNUSED_APPS_SAFETY_CENTER_ISSUE_ID)
+            .addAction(seeUnusedAppsAction)
+            .setOnDismissPendingIntent(makeDismissIntent(context, sessionId))
+            .setIssueCategory(SafetySourceIssue.ISSUE_CATEGORY_DEVICE)
+            .build()
 
-        // If this user is a profile, then its hibernation/auto-revoke will be handled by the
-        // primary user
-        if (isProfile(context)) {
+        val safetySourceData = SafetySourceData.Builder()
+            .addIssue(issue)
+            .build()
+
+        safetyCenterManager.setSafetySourceData(
+            Constants.UNUSED_APPS_SAFETY_CENTER_SOURCE_ID,
+            safetySourceData,
+            safetyEvent)
+    } else {
+        safetyCenterManager.setSafetySourceData(
+            Constants.UNUSED_APPS_SAFETY_CENTER_SOURCE_ID,
+            /* safetySourceData= */ null,
+            safetyEvent)
+    }
+}
+
+/**
+ * Set whether we show the safety center card to the user to review their auto-revoked permissions.
+ */
+fun setUnusedAppsReviewNeeded(context: Context, needsReview: Boolean) {
+    val sharedPreferences = context.sharedPreferences
+    if (sharedPreferences.contains(PREF_KEY_UNUSED_APPS_REVIEW) &&
+        sharedPreferences.getBoolean(PREF_KEY_UNUSED_APPS_REVIEW, false) == needsReview) {
+        return
+    }
+    sharedPreferences.edit().putBoolean(PREF_KEY_UNUSED_APPS_REVIEW, needsReview).apply()
+}
+
+private fun getUnusedAppsReviewNeeded(context: Context): Boolean {
+    return context.sharedPreferences.getBoolean(PREF_KEY_UNUSED_APPS_REVIEW, false)
+}
+
+/**
+ * Receiver of the following broadcasts:
+ * <ul>
+ *   <li> {@link Intent.ACTION_BOOT_COMPLETED}
+ *   <li> {@link #ACTION_SET_UP_HIBERNATION}
+ *   <li> {@link Intent.ACTION_TIME_CHANGED}
+ *   <li> {@link Intent.ACTION_TIMEZONE_CHANGED}
+ * </ul>
+ */
+class HibernationBroadcastReceiver : BroadcastReceiver() {
+
+    override fun onReceive(context: Context, intent: Intent) {
+        val action = intent.action
+        if (action == Intent.ACTION_BOOT_COMPLETED || action == ACTION_SET_UP_HIBERNATION) {
             if (DEBUG_HIBERNATION_POLICY) {
-                DumpableLog.i(LOG_TAG, "user ${Process.myUserHandle().identifier} is a profile." +
-                        " Not running hibernation job.")
+                DumpableLog.i(LOG_TAG, "scheduleHibernationJob " +
+                  "with frequency ${getCheckFrequencyMs()}ms " +
+                  "and threshold ${getUnusedThresholdMs()}ms")
             }
-            return
-        } else if (DEBUG_HIBERNATION_POLICY) {
-            DumpableLog.i(LOG_TAG, "user ${Process.myUserHandle().identifier} is a profile" +
-                    "owner. Running hibernation job.")
-        }
 
-        if (isNewJobScheduleRequired(context)) {
-            // periodic jobs normally run immediately, which is unnecessarily premature
-            SKIP_NEXT_RUN = true
-            val jobInfo = JobInfo.Builder(
-                Constants.HIBERNATION_JOB_ID,
-                ComponentName(context, HibernationJobService::class.java))
-                .setPeriodic(getCheckFrequencyMs())
-                // persist this job across boots
-                .setPersisted(true)
-                .build()
-            val status = context.getSystemService(JobScheduler::class.java)!!.schedule(jobInfo)
-            if (status != JobScheduler.RESULT_SUCCESS) {
-                DumpableLog.e(LOG_TAG,
-                    "Could not schedule ${HibernationJobService::class.java.simpleName}: $status")
+            initStartTimeOfUnusedAppTracking(context.sharedPreferences)
+
+            // If this user is a profile, then its hibernation/auto-revoke will be handled by the
+            // primary user
+            if (isProfile(context)) {
+                if (DEBUG_HIBERNATION_POLICY) {
+                    DumpableLog.i(LOG_TAG,
+                                  "user ${Process.myUserHandle().identifier} is a profile." +
+                                    " Not running hibernation job.")
+                }
+                return
+            } else if (DEBUG_HIBERNATION_POLICY) {
+                DumpableLog.i(LOG_TAG,
+                              "user ${Process.myUserHandle().identifier} is a profile" +
+                                "owner. Running hibernation job.")
             }
+
+            if (isNewJobScheduleRequired(context)) {
+                // periodic jobs normally run immediately, which is unnecessarily premature
+                SKIP_NEXT_RUN = true
+                val jobInfo = JobInfo.Builder(
+                    Constants.HIBERNATION_JOB_ID,
+                    ComponentName(context, HibernationJobService::class.java))
+                    .setPeriodic(getCheckFrequencyMs())
+                    // persist this job across boots
+                    .setPersisted(true)
+                    .build()
+                val status =
+                    context.getSystemService(JobScheduler::class.java)!!.schedule(jobInfo)
+                if (status != JobScheduler.RESULT_SUCCESS) {
+                    DumpableLog.e(LOG_TAG, "Could not schedule " +
+                      "${HibernationJobService::class.java.simpleName}: $status")
+                }
+            }
+        }
+        if (action == Intent.ACTION_TIME_CHANGED || action == Intent.ACTION_TIMEZONE_CHANGED) {
+            adjustStartTimeOfUnusedAppTracking(context.sharedPreferences)
         }
     }
 
@@ -228,7 +340,7 @@ private suspend fun getAppsToHibernate(
     context: Context
 ): Map<UserHandle, List<LightPackageInfo>> {
     val now = System.currentTimeMillis()
-    val firstBootTime = context.firstBootTime
+    val startTimeOfUnusedAppTracking = getStartTimeOfUnusedAppTracking(context.sharedPreferences)
 
     val allPackagesByUser = AllPackageInfosLiveData.getInitializedValue(forceUpdate = true)
     val allPackagesByUserByUid = allPackagesByUser.mapValues { (_, pkgs) ->
@@ -273,7 +385,7 @@ private suspend fun getAppsToHibernate(
             lastTimePkgUsed = Math.max(lastTimePkgUsed, packageInfo.firstInstallTime)
 
             // Limit by first boot time
-            lastTimePkgUsed = Math.max(lastTimePkgUsed, firstBootTime)
+            lastTimePkgUsed = Math.max(lastTimePkgUsed, startTimeOfUnusedAppTracking)
 
             // Handle cross-profile apps
             if (context.isPackageCrossProfile(pkgName)) {
@@ -535,15 +647,120 @@ val Context.sharedPreferences: SharedPreferences
     return PreferenceManager.getDefaultSharedPreferences(this)
 }
 
-private val Context.firstBootTime: Long get() {
-    var time = sharedPreferences.getLong(PREF_KEY_FIRST_BOOT_TIME, -1L)
-    if (time > 0) {
-        return time
+internal class SystemTime {
+    var actualSystemTime: Long = SNAPSHOT_UNINITIALIZED
+    var actualRealtime: Long = SNAPSHOT_UNINITIALIZED
+    var diffSystemTime: Long = SNAPSHOT_UNINITIALIZED
+}
+
+private fun getSystemTime(sharedPreferences: SharedPreferences): SystemTime {
+    val systemTime = SystemTime()
+    val systemTimeSnapshot = sharedPreferences.getLong(PREF_KEY_BOOT_TIME_SNAPSHOT,
+                                                       SNAPSHOT_UNINITIALIZED)
+    if (systemTimeSnapshot == SNAPSHOT_UNINITIALIZED) {
+        DumpableLog.e(LOG_TAG, "PREF_KEY_BOOT_TIME_SNAPSHOT is not initialized")
+        return systemTime
     }
-    // This is the first boot
-    time = System.currentTimeMillis()
-    sharedPreferences.edit().putLong(PREF_KEY_FIRST_BOOT_TIME, time).apply()
-    return time
+
+    val realtimeSnapshot = sharedPreferences.getLong(PREF_KEY_ELAPSED_REALTIME_SNAPSHOT,
+                                                     SNAPSHOT_UNINITIALIZED)
+    if (realtimeSnapshot == SNAPSHOT_UNINITIALIZED) {
+        DumpableLog.e(LOG_TAG, "PREF_KEY_ELAPSED_REALTIME_SNAPSHOT is not initialized")
+        return systemTime
+    }
+    systemTime.actualSystemTime = System.currentTimeMillis()
+    systemTime.actualRealtime = SystemClock.elapsedRealtime()
+    val expectedSystemTime = systemTime.actualRealtime - realtimeSnapshot + systemTimeSnapshot
+    systemTime.diffSystemTime = systemTime.actualSystemTime - expectedSystemTime
+    return systemTime
+}
+
+fun getStartTimeOfUnusedAppTracking(sharedPreferences: SharedPreferences): Long {
+    val startTimeOfUnusedAppTracking = sharedPreferences.getLong(
+        PREF_KEY_START_TIME_OF_UNUSED_APP_TRACKING, SNAPSHOT_UNINITIALIZED)
+
+    // If the preference is not initialized then use the current system time.
+    if (startTimeOfUnusedAppTracking == SNAPSHOT_UNINITIALIZED) {
+        val actualSystemTime = System.currentTimeMillis()
+        sharedPreferences.edit()
+            .putLong(PREF_KEY_START_TIME_OF_UNUSED_APP_TRACKING, actualSystemTime).apply()
+        return actualSystemTime
+    }
+
+    val diffSystemTime = getSystemTime(sharedPreferences).diffSystemTime
+    // If the value stored is older than a day adjust start time.
+    if (diffSystemTime > ONE_DAY_MS) {
+        adjustStartTimeOfUnusedAppTracking(sharedPreferences)
+    }
+    return sharedPreferences.getLong(PREF_KEY_START_TIME_OF_UNUSED_APP_TRACKING,
+                                     SNAPSHOT_UNINITIALIZED)
+}
+
+private fun initStartTimeOfUnusedAppTracking(sharedPreferences: SharedPreferences) {
+    val systemTimeSnapshot = System.currentTimeMillis()
+    if (sharedPreferences
+            .getLong(PREF_KEY_START_TIME_OF_UNUSED_APP_TRACKING, SNAPSHOT_UNINITIALIZED)
+        == SNAPSHOT_UNINITIALIZED) {
+        sharedPreferences.edit()
+            .putLong(PREF_KEY_START_TIME_OF_UNUSED_APP_TRACKING, systemTimeSnapshot).apply()
+    }
+    val realtimeSnapshot = SystemClock.elapsedRealtime()
+    sharedPreferences.edit()
+        .putLong(PREF_KEY_BOOT_TIME_SNAPSHOT, systemTimeSnapshot)
+        .putLong(PREF_KEY_ELAPSED_REALTIME_SNAPSHOT, realtimeSnapshot)
+        .apply()
+}
+
+private fun adjustStartTimeOfUnusedAppTracking(sharedPreferences: SharedPreferences) {
+    val systemTime = getSystemTime(sharedPreferences)
+    val startTimeOfUnusedAppTracking =
+        sharedPreferences.getLong(PREF_KEY_START_TIME_OF_UNUSED_APP_TRACKING,
+                                  SNAPSHOT_UNINITIALIZED)
+    if (startTimeOfUnusedAppTracking == SNAPSHOT_UNINITIALIZED) {
+        DumpableLog.e(LOG_TAG, "PREF_KEY_START_TIME_OF_UNUSED_APP_TRACKING is not initialized")
+        return
+    }
+    val adjustedStartTimeOfUnusedAppTracking =
+        startTimeOfUnusedAppTracking + systemTime.diffSystemTime
+    sharedPreferences.edit()
+        .putLong(PREF_KEY_START_TIME_OF_UNUSED_APP_TRACKING, adjustedStartTimeOfUnusedAppTracking)
+        .putLong(PREF_KEY_BOOT_TIME_SNAPSHOT, systemTime.actualSystemTime)
+        .putLong(PREF_KEY_ELAPSED_REALTIME_SNAPSHOT, systemTime.actualRealtime)
+        .apply()
+}
+
+/**
+ * Make intent to go to unused apps page.
+ */
+private fun makeUnusedAppsIntent(context: Context, sessionId: Long): PendingIntent {
+    val clickIntent = Intent(Intent.ACTION_MANAGE_UNUSED_APPS).apply {
+        putExtra(Constants.EXTRA_SESSION_ID, sessionId)
+        flags = FLAG_ACTIVITY_NEW_TASK
+    }
+    val pendingIntent = PendingIntent.getActivity(context, 0, clickIntent,
+        FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE)
+    return pendingIntent
+}
+
+/**
+ * Make intent for when safety center card is dismissed.
+ */
+private fun makeDismissIntent(context: Context, sessionId: Long): PendingIntent {
+    val dismissIntent = Intent(context, DismissHandler::class.java).apply {
+        putExtra(Constants.EXTRA_SESSION_ID, sessionId)
+        flags = FLAG_RECEIVER_FOREGROUND
+    }
+    return PendingIntent.getBroadcast(context, /* requestCode= */ 0, dismissIntent,
+        FLAG_ONE_SHOT or FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE)
+}
+
+/**
+ * Broadcast receiver class for when safety center card is dismissed.
+ */
+class DismissHandler : BroadcastReceiver() {
+    override fun onReceive(context: Context?, intent: Intent?) {
+        setUnusedAppsReviewNeeded(context!!, false)
+    }
 }
 
 /**
@@ -589,6 +806,16 @@ class HibernationJobService : JobService() {
                 val unusedApps: Set<Pair<String, UserHandle>> = hibernatedApps + revokedApps
                 if (unusedApps.isNotEmpty()) {
                     showUnusedAppsNotification(unusedApps.size, sessionId)
+                    if (SdkLevel.isAtLeastT() &&
+                        revokedApps.isNotEmpty() &&
+                        getSystemService(SafetyCenterManager::class.java)!!.isSafetyCenterEnabled) {
+                        setUnusedAppsReviewNeeded(this@HibernationJobService, true)
+                        rescanAndPushDataToSafetyCenter(
+                            this@HibernationJobService,
+                            sessionId,
+                            SafetyEvent.Builder(SafetyEvent.SAFETY_EVENT_TYPE_SOURCE_STATE_CHANGED)
+                                .build())
+                    }
                 }
             } catch (e: Exception) {
                 DumpableLog.e(LOG_TAG, "Failed to auto-revoke permissions", e)
@@ -606,14 +833,6 @@ class HibernationJobService : JobService() {
                 NotificationManager.IMPORTANCE_LOW)
         notificationManager.createNotificationChannel(permissionReminderChannel)
 
-        val clickIntent = Intent(Intent.ACTION_MANAGE_UNUSED_APPS).apply {
-            putExtra(Constants.EXTRA_SESSION_ID, sessionId)
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        }
-        val pendingIntent = PendingIntent.getActivity(this, 0, clickIntent,
-            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_UPDATE_CURRENT or
-            PendingIntent.FLAG_IMMUTABLE)
-
         var notifTitle: String
         var notifContent: String
         if (isHibernationEnabled()) {
@@ -630,15 +849,35 @@ class HibernationJobService : JobService() {
             .setContentTitle(notifTitle)
             .setContentText(notifContent)
             .setStyle(Notification.BigTextStyle().bigText(notifContent))
-            .setSmallIcon(R.drawable.ic_settings_24dp)
             .setColor(getColor(android.R.color.system_notification_accent_color))
             .setAutoCancel(true)
-            .setContentIntent(pendingIntent)
-        Utils.getSettingsLabelForNotifications(applicationContext.packageManager)?.let {
-            settingsLabel ->
-            val extras = Bundle()
-            extras.putString(Notification.EXTRA_SUBSTITUTE_APP_NAME, settingsLabel.toString())
-            b.addExtras(extras)
+            .setContentIntent(makeUnusedAppsIntent(this, sessionId))
+        val extras = Bundle()
+        if (SdkLevel.isAtLeastT() &&
+            getSystemService(SafetyCenterManager::class.java)!!.isSafetyCenterEnabled) {
+            if (KotlinUtils.shouldShowSafetyProtectionResources(this)) {
+                // Use Protected by Android branding
+                extras.putString(Notification.EXTRA_SUBSTITUTE_APP_NAME,
+                    Html.fromHtml(getString(android.R.string.safety_protection_display_text),
+                        /* flags= */ 0).toString())
+                b.setSmallIcon(android.R.drawable.ic_safety_protection)
+                    .setColor(getColor(R.color.safety_center_info))
+                    .addExtras(extras)
+            } else {
+                // Use non-GMS PbA branding
+                extras.putString(Notification.EXTRA_SUBSTITUTE_APP_NAME,
+                    getString(R.string.safety_center_notification_app_label))
+                b.setSmallIcon(R.drawable.ic_settings_notification)
+                    .addExtras(extras)
+            }
+        } else {
+            // Use standard Settings branding
+            Utils.getSettingsLabelForNotifications(applicationContext.packageManager)?.let {
+                settingsLabel ->
+                extras.putString(Notification.EXTRA_SUBSTITUTE_APP_NAME, settingsLabel.toString())
+                b.setSmallIcon(R.drawable.ic_settings_24dp)
+                    .addExtras(extras)
+            }
         }
 
         notificationManager.notify(HibernationJobService::class.java.simpleName,
@@ -658,8 +897,8 @@ class HibernationJobService : JobService() {
  * Packages using exempt services for the current user (package-name -> list<service-interfaces>
  * implemented by the package)
  */
-class ExemptServicesLiveData(private val user: UserHandle)
-    : SmartUpdateMediatorLiveData<Map<String, List<String>>>() {
+class ExemptServicesLiveData(private val user: UserHandle) :
+    SmartUpdateMediatorLiveData<Map<String, List<String>>>() {
     private val serviceLiveDatas: List<SmartUpdateMediatorLiveData<Set<String>>> = listOf(
             ServiceLiveData[InputMethod.SERVICE_INTERFACE,
                     Manifest.permission.BIND_INPUT_METHOD,
@@ -736,8 +975,8 @@ class ExemptServicesLiveData(private val user: UserHandle)
 /**
  * Live data for whether the hibernation feature is enabled or not.
  */
-object HibernationEnabledLiveData
-    : MutableLiveData<Boolean>() {
+object HibernationEnabledLiveData :
+    MutableLiveData<Boolean>() {
     init {
         postValue(SdkLevel.isAtLeastS() &&
             DeviceConfig.getBoolean(NAMESPACE_APP_HIBERNATION,

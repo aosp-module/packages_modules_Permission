@@ -23,6 +23,8 @@
     <string name="back" msgid="6249950659061523680">"উভতি যাওক"</string>
     <string name="available" msgid="6007778121920339498">"উপলব্ধ"</string>
     <string name="blocked" msgid="9195547604866033708">"অৱৰোধ কৰা আছে"</string>
+    <string name="on" msgid="280241003226755921">"অন আছে"</string>
+    <string name="off" msgid="1438489226422866263">"অফ আছে"</string>
     <string name="uninstall_or_disable" msgid="4496612999740858933">"আনইনষ্টল অথবা অক্ষম কৰক"</string>
     <string name="app_not_found_dlg_title" msgid="6029482906093859756">"এপ্ পোৱা নগ\'ল"</string>
     <string name="grant_dialog_button_deny" msgid="88262611492697192">"অনুমতি নিদিব"</string>
@@ -70,7 +72,7 @@
     <string name="additional_permissions" msgid="5801285469338873430">"অতিৰিক্ত অনুমতি"</string>
     <string name="app_permissions_info_button_label" msgid="7633312050729974623">"এপৰ তথ্য খোলক"</string>
     <string name="additional_permissions_more" msgid="5681220714755304407">"{count,plural, =1{আৰু # টা}one{আৰু # টা}other{আৰু # টা}}"</string>
-    <string name="old_sdk_deny_warning" msgid="2382236998845153919">"এই এপটো Androidৰ এটা পুৰণা সংস্কৰণৰ বাবে প্ৰস্তুত কৰা হৈছিল। অনুমতি নিদিলে ই বিচৰা ধৰণে কাম নকৰিবও পাৰে।"</string>
+    <string name="old_sdk_deny_warning" msgid="2382236998845153919">"এই এপ্‌টো Androidৰ এটা পুৰণা সংস্কৰণৰ বাবে প্ৰস্তুত কৰা হৈছিল। অনুমতি নিদিলে ই বিচৰা ধৰণে কাম নকৰিবও পাৰে।"</string>
     <string name="storage_supergroup_warning_allow" msgid="103093462784523190">"এই এপ্‌টো Androidৰ এটা পুৰণা সংস্কৰণৰ বাবে ডিজাইন কৰা হৈছিল। যদি আপুনি এই অনুমতিটো দিয়ে, তেন্তে আটাইবোৰ ষ্ট’ৰেজলৈ (ফট’, ভিডিঅ’, সংগীত, অডিঅ’ আৰু অন্য ফাইলসমূহকে ধৰি) এক্সেছৰ অনুমতি দিয়া হ’ব।"</string>
     <string name="storage_supergroup_warning_deny" msgid="6420765672683284347">"এই এপ্‌টো Androidৰ এটা পুৰণা সংস্কৰণৰ বাবে ডিজাইন কৰা হৈছিল। যদি আপুনি এই অনুমতিটো অস্বীকাৰ কৰে, তেন্তে আটাইবোৰ ষ্ট’ৰেজলৈ (ফট’, ভিডিঅ’, সংগীত, অডিঅ’ আৰু অন্য ফাইলসমূহকে ধৰি) এক্সেছ অস্বীকাৰ কৰা হ’ব।"</string>
     <string name="default_permission_description" msgid="4624464917726285203">"অজ্ঞাত কাৰ্য কৰিব পাৰে"</string>
@@ -108,7 +110,7 @@
     <string name="other_permissions" msgid="2901186127193849594">"অন্য এপৰ কার্যক্ষমতা"</string>
     <string name="permission_request_title" msgid="8790310151025020126">"অনুমতি বিচাৰি কৰা অনুৰোধ"</string>
     <string name="screen_overlay_title" msgid="6977038513913222078">"স্ক্ৰীন অভাৰলে\' চিনাক্ত কৰা হৈছে"</string>
-    <string name="screen_overlay_message" msgid="5622563069757142102">"এই অনুমতিৰ ছেটিং সলনি কৰিবলৈ আপুনি প্ৰথমে ছেটিংসমূহ &gt; এপসমূহলৈ গৈ স্ক্ৰীণ অভাৰলে\' অফ কৰিব লাগিব"</string>
+    <string name="screen_overlay_message" msgid="5622563069757142102">"এই অনুমতিৰ ছেটিং সলনি কৰিবলৈ আপুনি প্ৰথমে ছেটিংসমূহ &gt; এপসমূহলৈ গৈ স্ক্ৰীন অভাৰলে\' অফ কৰিব লাগিব"</string>
     <string name="screen_overlay_button" msgid="4655005928054025250">"ছেটিং খোলক"</string>
     <string name="wear_not_allowed_dlg_title" msgid="1429467891296932713">"Android Wear"</string>
     <string name="wear_not_allowed_dlg_text" msgid="512340555334769098">"ইনষ্টল/আনইনষ্টল কাৰ্য Wearত কৰিব নোৱাৰি।"</string>
@@ -130,6 +132,7 @@
     <string name="permission_group_usage_subtitle_7d" msgid="1465828402260324654">"এপে যোৱা ৭ দিনত আপোনাৰ <xliff:g id="PERMGROUP">%1$s</xliff:g> ব্যৱহাৰ কৰাৰ টাইমলাইন"</string>
     <string name="permission_usage_access_dialog_subtitle" msgid="4171772805196955753">"এই এপ্‌টোৱে কেতিয়া আপোনাৰ <xliff:g id="PERMGROUP">%1$s</xliff:g> অনুমতি ব্যৱহাৰ কৰিছিল"</string>
     <string name="permission_usage_access_dialog_learn_more" msgid="7121468469493184613">"অধিক জানক"</string>
+    <string name="learn_more_content_description" msgid="8673699744544502539">"<xliff:g id="PERMGROUP">%1$s</xliff:g>ৰ বিষয়ে অধিক জানক"</string>
     <string name="manage_permission_summary" msgid="4117555482684114317">"আপোনাৰ <xliff:g id="PERMGROUP">%1$s</xliff:g>লৈ এপৰ এক্সেছ নিয়ন্ত্ৰণ কৰক"</string>
     <string name="auto_permission_usage_timeline_summary" msgid="2713135806453218703">"<xliff:g id="ACCESS_TIME">%1$s</xliff:g> • <xliff:g id="SUMMARY_TEXT">%2$s</xliff:g>"</string>
     <string name="history_preference_subtext_2" msgid="1521763591164293683">"<xliff:g id="APP_NAME">%1$s</xliff:g> • <xliff:g id="TRUNCATED_TIME">%2$s</xliff:g>"</string>
@@ -211,7 +214,6 @@
     <string name="auto_revocable_permissions_two" msgid="4874067408752041716">"<xliff:g id="PERM_0">%1$s</xliff:g> আৰু <xliff:g id="PERM_1">%2$s</xliff:g>ৰ অনুমতিসমূহ আঁতৰোৱা হ’ব।"</string>
     <string name="auto_revocable_permissions_many" msgid="1521807896206032992">"আঁতৰাবলগা অনুমতিসমূহ: <xliff:g id="PERMS">%1$s</xliff:g>।"</string>
     <string name="auto_manage_title" msgid="7693181026874842935">"অনুমতিসমূহ স্বয়ংক্ৰিয়ভাৱে পৰিচালনা কৰক"</string>
-    <string name="off" msgid="1438489226422866263">"অফ আছে"</string>
     <string name="auto_revoked_app_summary_one" msgid="7093213590301252970">"<xliff:g id="PERMISSION_NAME">%s</xliff:g>ৰ অনুমতি আঁতৰোৱা হ\'ল"</string>
     <string name="auto_revoked_app_summary_two" msgid="1910545340763709389">"<xliff:g id="PERMISSION_NAME_0">%1$s</xliff:g> আৰু <xliff:g id="PERMISSION_NAME_1">%2$s</xliff:g>ৰ অনুমতিসমূহ আঁতৰোৱা হ\'ল"</string>
     <string name="auto_revoked_app_summary_many" msgid="5930976230827378798">"<xliff:g id="PERMISSION_NAME">%1$s</xliff:g>ৰ আৰু <xliff:g id="NUMBER">%2$s</xliff:g> টা অন্য অনুমতি আঁতৰোৱা হ\'ল"</string>
@@ -262,6 +264,9 @@
     <string name="auto_revoke_permission_notification_content" msgid="5125990886047799375">"কিছুমান এপ্‌ কেইমাহমান ব্যৱহাৰ কৰা হোৱা নাই। পর্যালোচনা কৰিবলৈ টিপক।"</string>
     <string name="unused_apps_notification_title" msgid="4314832015894238019">"{count,plural, =1{# টা অব্যৱহৃত এপ্}one{# টা অব্যৱহৃত এপ্}other{# টা অব্যৱহৃত এপ্}}"</string>
     <string name="unused_apps_notification_content" msgid="9195026773244581246">"অনুমতি আৰু অস্থায়ী ফাইলসমূহ আঁতৰোৱা হৈছে আৰু জাননী বন্ধ কৰা হৈছে। পৰ্যালোচনা কৰিবলৈ টিপক।"</string>
+    <string name="unused_apps_safety_center_card_title" msgid="5638409355530099149">"অনুমতি আঁতৰোৱা এপ্‌সমূহ পৰ্যালোচনা কৰক"</string>
+    <string name="unused_apps_safety_center_card_content" msgid="1088557243627427820">"আপুনি কিছুসময় ধৰি ব্যৱহাৰ নকৰা এপ্‌সমূহৰ বাবে অনুমতি আৰু অস্থায়ী ফাইলসমূহ আঁতৰোৱা হৈছে আৰু জাননীসমূহ বন্ধ কৰা হৈছে।"</string>
+    <string name="unused_apps_safety_center_action_title" msgid="8865914432518993194">"এপ্‌সমূহ পৰ্যালোচনা কৰক"</string>
     <string name="post_drive_permission_decision_reminder_title" msgid="1290697371418139976">"শেহতীয়া অনুমতিসমূহ পৰীক্ষা কৰক"</string>
     <string name="post_drive_permission_decision_reminder_summary_1_app_1_permission" msgid="670521503734140711">"আপুনি গাড়ী চলাই থকাৰ সময়ত <xliff:g id="APP">%1$s</xliff:g>ক <xliff:g id="PERMISSION">%2$s</xliff:g>ৰ এক্সেছ দিছিল"</string>
     <string name="post_drive_permission_decision_reminder_summary_1_app_2_permissions" msgid="671791184670801301">"আপুনি গাড়ী চলাই থকাৰ সময়ত <xliff:g id="APP">%1$s</xliff:g>ক <xliff:g id="PERMISSION_1">%2$s</xliff:g> আৰু <xliff:g id="PERMISSION_2">%3$s</xliff:g>ৰ এক্সেছ দিছিল"</string>
@@ -276,6 +281,19 @@
     <string name="auto_revoke_preference_summary" msgid="5517958331781391481">"আপোনাৰ গোপনীয়তা সুৰক্ষিত কৰিবলৈ অনুমতিসমূহ আঁতৰোৱা হৈছে"</string>
     <string name="background_location_access_reminder_notification_title" msgid="1140797924301941262">"<xliff:g id="APP_NAME">%s</xliff:g>এ নেপথ্যত আপোনাৰ অৱস্থান লাভ কৰিছে"</string>
     <string name="background_location_access_reminder_notification_content" msgid="7787084707336546245">"এই এপটোৱে সদায় আপোনাৰ অৱস্থান এক্সেছ কৰিব পাৰে। সলনি কৰিবলৈ টিপক।"</string>
+    <string name="notification_listener_reminder_notification_title" msgid="3747210460187479091">"আপোনাৰ জাননীৰ এক্সেছ থকা এপ্‌সমূহ পৰ্যালোচনা কৰক"</string>
+    <string name="notification_listener_reminder_notification_content" msgid="831476101108863427">"<xliff:g id="APP_NAME">%s</xliff:g>এ আপোনাৰ জাননীৰ ভিতৰত থকা সমল অগ্ৰাহ্য কৰিব, তাৰ ওপৰত কাৰ্যব্যৱস্থা গ্ৰহণ কৰিব আৰু সেয়া এক্সেছ কৰিব পাৰে"</string>
+    <string name="notification_listener_warning_card_content" msgid="7840973324284115893">"এই এপ্‌টোৱে আপোনাৰ জাননীৰ ভিতৰত থকা সমল অগ্ৰাহ্য কৰিব, তাৰ ওপৰত কাৰ্যব্যৱস্থা গ্ৰহণ কৰিব আৰু সেয়া এক্সেছ কৰিব পাৰে। কিছুমান এপক বিচৰা ধৰণে কাম কৰিবলৈ এই এক্সেছটোৰ প্ৰয়োজন হয়।"</string>
+    <string name="notification_listener_remove_access_button_label" msgid="7101898782417817097">"এক্সেছ আঁতৰাওক"</string>
+    <string name="notification_listener_review_app_button_label" msgid="3433073281029143924">"অধিক বিকল্প চাওক"</string>
+    <string name="notification_listener_remove_access_success_label" msgid="2477611529875633107">"এক্সেছ আঁতৰোৱা হৈছে"</string>
+    <string name="accessibility_access_reminder_notification_title" msgid="2971317234668807566">"ডিভাইচৰ সম্পূৰ্ণ এক্সেছ থকা এপৰ পৰ্যালোচনা কৰক"</string>
+    <string name="accessibility_access_reminder_notification_content" msgid="7389454158175306720">"<xliff:g id="APP_NAME">%s</xliff:g>এ আপোনাৰ স্ক্ৰীন চাব পাৰে আৰু আপোনাৰ ডিভাইচত কাৰ্য সম্পন্ন কৰিব পাৰে। সাধ্য সুবিধাৰ এপ্‌সমূহক বিচৰা ধৰণে কাম কৰিবলৈ এই ধৰণৰ এক্সেছৰ প্ৰয়োজন হয়।"</string>
+    <string name="accessibility_access_warning_card_content" msgid="4370327190293217358">"এই এপ্‌টোৱে আপোনাৰ স্ক্ৰীন চাব পাৰে আৰু আপোনাৰ ডিভাইচত কাৰ্য সম্পন্ন কৰিব পাৰে। সাধ্য সুবিধাৰ এপ্‌সমূহক বিচৰা ধৰণে কাম কৰিবলৈ এই ধৰণৰ এক্সেছৰ প্ৰয়োজন হয়, কিন্তু এপ্‌টো পৰীক্ষা কৰক আৰু আপুনি সেইটোক বিশ্বাস কৰে বুলি নিশ্চিত কৰক।"</string>
+    <string name="accessibility_remove_access_button_label" msgid="44145801526711640">"এক্সেছ আঁতৰাওক"</string>
+    <string name="accessibility_show_all_apps_button_label" msgid="960067249326392280">"সম্পূৰ্ণ এক্সেছ থকা এপ্‌সমূহ চাওক"</string>
+    <string name="accessibility_remove_access_success_label" msgid="4380995302917014670">"এক্সেছ আঁতৰোৱা হৈছে"</string>
+    <string name="safety_center_notification_app_label" msgid="2457720616141926534">"Android ছিষ্টেম"</string>
     <string name="auto_revoke_after_notification_title" msgid="5417761027669887431">"গোপনীয়তা সুৰক্ষিত কৰিবলৈ এপৰ অনুমতিসমূহক আঁতৰোৱা হ\'ল"</string>
     <string name="auto_revoke_after_notification_content_one" msgid="6804038707453662753">"<xliff:g id="APP_NAME">%s</xliff:g> কেইমাহমান ব্যৱহাৰ কৰা হোৱা নাই। পর্যালোচনা কৰিবলৈ টিপক।"</string>
     <string name="auto_revoke_after_notification_content_two" msgid="9108709764831425172">"<xliff:g id="APP_NAME">%s</xliff:g> আৰু অন্য এটা এপ্ কেইমাহমান ব্যৱহাৰ কৰা হোৱা নাই। পর্যালোচনা কৰিবলৈ টিপক।"</string>
@@ -292,7 +310,7 @@
     <string name="unused_app_permissions_removed_summary_some" msgid="5080490037831563441">"আপোনাৰ ডেটা সুৰক্ষিত কৰিবলৈ আপুনি কেইমাহমান ব্যৱহাৰ নকৰা কিছুমান এপৰ পৰা অনুমতিসমূহ আঁতৰোৱা হৈছে"</string>
     <string name="one_unused_app_summary" msgid="7831913934488881991">"১ টা এপ্ কেইমাহমান ব্যৱহাৰ কৰা হোৱা নাই"</string>
     <string name="num_unused_apps_summary" msgid="1870719749940571227">"<xliff:g id="NUMBER_OF_APPS">%s</xliff:g> টা এপ্ কেইমাহমান ব্যৱহাৰ কৰা হোৱা নাই"</string>
-    <string name="permission_subtitle_only_in_foreground" msgid="9068389431267377564">"কেৱল এপটো ব্যৱহাৰ হৈ থকা সময়ত"</string>
+    <string name="permission_subtitle_only_in_foreground" msgid="9068389431267377564">"কেৱল এপ্‌টো ব্যৱহাৰ হৈ থকা সময়ত"</string>
     <string name="permission_subtitle_media_only" msgid="8917869683764720717">"মিডিয়া"</string>
     <string name="permission_subtitle_all_files" msgid="4982613338298067862">"আটাইবোৰ ফাইল"</string>
     <string name="permission_subtitle_background" msgid="8916750995309083180">"সকলো সময়ৰ বাবে অনুমতি দিয়া হৈছে"</string>
@@ -356,7 +374,7 @@
     <string name="role_emergency_search_keywords" msgid="1920007722599213358">"বৰফ"</string>
     <string name="role_home_label" msgid="3871847846649769412">"ডিফ’ল্ট হ’ম এপ্"</string>
     <string name="role_home_short_label" msgid="8544733747952272337">"হ’ম এপ্"</string>
-    <string name="role_home_description" msgid="7997371519626556675">"যিবোৰ এপক সাধাৰণতে লঞ্চাৰ বুলি কোৱা হয় সেই এপ্‌বোৰে আপোনাৰ Android ডিভাইচত গৃহ স্ক্ৰীণৰ ঠাই লয় আৰু আপোনাক নিজৰ ডিভাইচৰ সমল আৰু সুবিধাবোৰৰ এক্সেছ দিয়ে"</string>
+    <string name="role_home_description" msgid="7997371519626556675">"যিবোৰ এপক সাধাৰণতে লঞ্চাৰ বুলি কোৱা হয় সেই এপ্‌বোৰে আপোনাৰ Android ডিভাইচত গৃহ স্ক্ৰীনৰ ঠাই লয় আৰু আপোনাক নিজৰ ডিভাইচৰ সমল আৰু সুবিধাবোৰৰ এক্সেছ দিয়ে"</string>
     <string name="role_home_request_title" msgid="738136983453341081">"<xliff:g id="APP_NAME">%1$s</xliff:g>ক আপোনাৰ ডিফ’ল্ট হ’ম এপ্ হিচাপে ছেট কৰিবনে?"</string>
     <string name="role_home_request_description" msgid="2658833966716057673">"কোনো অনুমতিৰ প্ৰয়োজন নাই"</string>
     <string name="role_home_search_keywords" msgid="3830755001192666285">"লঞ্চাৰ"</string>
@@ -496,17 +514,28 @@
     <string name="blocked_sensor_summary" msgid="4443707628305027375">"এপ্‌ আৰু সেৱাৰ বাবে"</string>
     <string name="blocked_mic_summary" msgid="8960466941528458347">"আপুনি কোনো জৰুৰীকালীন নম্বৰত কল কৰিলে মাইক্ৰ’ফ’নৰ ডেটা তথাপি শ্বেয়াৰ কৰা হ’ব পাৰে।"</string>
     <string name="blocked_sensor_button_label" msgid="6742092634984289658">"সলনি কৰক"</string>
-    <string name="safety_center_dashboard_page_title" msgid="7514620345152008005">"সুৰক্ষা আৰু গোপনীয়তা"</string>
-    <string name="safety_center_rescan_button" msgid="8047036829052958144">"স্কেন কৰক"</string>
+    <string name="safety_center_dashboard_page_title" msgid="2810774008694315854">"সুৰক্ষা আৰু গোপনীয়তা"</string>
+    <string name="safety_center_rescan_button" msgid="4517514567809409596">"ডিভাইচ স্কেন কৰক"</string>
     <string name="safety_center_issue_card_dismiss_button" msgid="5113965506144222402">"অগ্ৰাহ্য কৰক"</string>
+    <string name="safety_center_issue_card_dismiss_confirmation_title" msgid="2734809473425036382">"এই সতৰ্কবাৰ্তাটো অগ্ৰাহ্য কৰিবনে?"</string>
+    <string name="safety_center_issue_card_dismiss_confirmation_message" msgid="3775418736671093563">"অধিক সুৰক্ষা যোগ দিবলৈ যিকোনো সময়তে আপোনাৰ সুৰক্ষা সম্পৰ্কীয় আৰু গোপনীয়তাৰ ছেটিং পৰ্যালোচনা কৰক"</string>
+    <string name="safety_center_issue_card_confirm_dismiss_button" msgid="5884137843083634556">"অগ্ৰাহ্য কৰক"</string>
+    <string name="safety_center_issue_card_cancel_dismiss_button" msgid="2874578798877712346">"বাতিল কৰক"</string>
+    <string name="safety_center_entries_category_title" msgid="34356964062813115">"ছেটিং"</string>
+    <string name="safety_status_preference_title_and_summary_content_description" msgid="3511373256505058464">"সুৰক্ষা আৰু গোপনীয়তাৰ স্থিতি। <xliff:g id="OVERALL_SAFETY_STATUS">%1$s</xliff:g>। <xliff:g id="SUMMARY_OF_DEVICE_STATUS">%2$s</xliff:g>"</string>
     <string name="security_settings" msgid="3808106921175271317">"সুৰক্ষা সম্পৰ্কীয় ছেটিং"</string>
-    <string name="sensor_permissions_qs" msgid="4365989229426201877">"ছেন্সৰৰ অনুমতি"</string>
-    <string name="privacy_controls_qs" msgid="471793881466080745">"গোপনীয়তাৰ নিয়ন্ত্ৰণ"</string>
+    <string name="sensor_permissions_qs" msgid="1022267900031317472">"অনুমতি"</string>
+    <string name="safety_privacy_qs_tile_title" msgid="727301867710374052">"সুৰক্ষা আৰু গোপনীয়তা"</string>
+    <string name="safety_privacy_qs_tile_subtitle" msgid="3621544532041936749">"স্থিতি পৰীক্ষা কৰক"</string>
+    <string name="privacy_controls_qs" msgid="5780144882040591169">"আপোনাৰ গোপনীয়তাৰ নিয়ন্ত্ৰণ"</string>
+    <string name="security_settings_button_label_qs" msgid="8280343822465962330">"অধিক ছেটিং"</string>
+    <string name="camera_toggle_label_qs" msgid="3880261453066157285">"কেমেৰাৰ এক্সেছ"</string>
+    <string name="microphone_toggle_label_qs" msgid="8132912469813396552">"মাইকৰ এক্সেছ"</string>
     <string name="permissions_removed_qs" msgid="8957319130625294572">"অনুমতি আঁতৰোৱা হ’ল"</string>
-    <string name="camera_usage_qs" msgid="7943349178368641820">"কেমেৰাৰ অধিক ব্যৱহাৰ চাওক"</string>
-    <string name="microphone_usage_qs" msgid="2393193350541830472">"মাইক্ৰ’ফ’নৰ অধিক ব্যৱহাৰ চাওক"</string>
-    <string name="remove_camera_qs" msgid="8209716677879809162">"কেমেৰাৰ অনুমতি আঁতৰাওক"</string>
-    <string name="remove_microphone_qs" msgid="2893536836641560183">"মাইক্ৰ’ফ’নৰ অনুমতি আঁতৰাওক"</string>
+    <string name="camera_usage_qs" msgid="4394233566086665994">"শেহতীয়া কেমেৰাৰ ব্যৱহাৰ চাওক"</string>
+    <string name="microphone_usage_qs" msgid="8527666682168170417">"শেহতীয়া মাইকৰ ব্যৱহাৰ চাওক"</string>
+    <string name="remove_camera_qs" msgid="3649996161066883350">"এই এপ্‌টোৰ বাবে অনুমতি আঁতৰাওক"</string>
+    <string name="remove_microphone_qs" msgid="1276551965129953198">"এই এপ্‌টোৰ বাবে অনুমতি আঁতৰাওক"</string>
     <string name="manage_service_qs" msgid="7862555549364153805">"সেৱা পৰিচালনা কৰক"</string>
     <string name="manage_permissions_qs" msgid="3780541819763475434">"অনুমতি পৰিচালনা কৰক"</string>
     <string name="active_call_usage_qs" msgid="8559974395932523391">"ফ’ন কলে ব্যৱহাৰ কৰি আছে"</string>
@@ -517,8 +546,6 @@
     <string name="recent_app_usage_1_qs" msgid="261450184773310741">"শেহতীয়াকৈ <xliff:g id="APP_NAME">%1$s</xliff:g> (<xliff:g id="ATTRIBUTION_LABEL">%2$s</xliff:g>)এ ব্যৱহাৰ কৰিছে"</string>
     <string name="active_app_usage_2_qs" msgid="6107866785243565283">"<xliff:g id="APP_NAME">%1$s</xliff:g> (<xliff:g id="ATTRIBUTION_LABEL">%2$s</xliff:g> • <xliff:g id="PROXY_LABEL">%3$s</xliff:g>)এ ব্যৱহাৰ কৰি আছে"</string>
     <string name="recent_app_usage_2_qs" msgid="3591205954235694403">"শেহতীয়াকৈ <xliff:g id="APP_NAME">%1$s</xliff:g> (<xliff:g id="ATTRIBUTION_LABEL">%2$s</xliff:g> • <xliff:g id="PROXY_LABEL">%3$s</xliff:g>)এ ব্যৱহাৰ কৰিছে"</string>
-    <string name="safety_privacy_qs_tile_title" msgid="5431148204168066203">"সুৰক্ষা আৰু গোপনীয়তা"</string>
-    <string name="safety_privacy_qs_tile_subtitle" msgid="3621544532041936749">"স্থিতি পৰীক্ষা কৰক"</string>
     <string name="media_confirm_dialog_positive_button" msgid="9020793594051526399">"নিশ্চিত কৰক"</string>
     <string name="media_confirm_dialog_negative_button" msgid="226987376924861785">"উভতি যাওক"</string>
     <string name="media_confirm_dialog_title_a_to_p_aural_allow" msgid="8560601114044699903">"অন্য ফাইলো এক্সেছ কৰিবলৈ দিয়া হ’ব"</string>
@@ -537,4 +564,20 @@
     <string name="media_confirm_dialog_message_q_to_s_aural_deny" msgid="6832087393653561911">"এই এপ্‌টোৱে Androidৰ শেহতীয়া সংস্কৰণ সমৰ্থন নকৰে। যদি এই এপ্‌টোৱে সংগীত আৰু অডিঅ’ ফাইল এক্সেছ কৰিব নোৱাৰে, ইয়াক ফট’ আৰু ভিডিঅ’ও এক্সেছ কৰিবলৈ দিয়া নহ’ব।"</string>
     <string name="media_confirm_dialog_message_q_to_s_visual_allow" msgid="3504335060843147760">"এই এপ্‌টোৱে Androidৰ শেহতীয়া সংস্কৰণ সমৰ্থন নকৰে। যদি এই এপ্‌টোৱে ফট’ আৰু ভিডিঅ’ এক্সেছ কৰিব পাৰে, ইয়াক সংগীত আৰু অডিঅ’ ফাইলো এক্সেছ কৰিবলৈ দিয়া হ’ব।"</string>
     <string name="media_confirm_dialog_message_q_to_s_visual_deny" msgid="2145973462806481992">"এই এপ্‌টোৱে Androidৰ শেহতীয়া সংস্কৰণ সমৰ্থন নকৰে। যদি এই এপ্‌টোৱে সংগীত আৰু অডিঅ’ ফাইল এক্সেছ কৰিব নোৱাৰে, ইয়াক ফট’ আৰু ভিডিঅ’ও এক্সেছ কৰিবলৈ দিয়া নহ’ব।"</string>
+    <string name="safety_center_background_location_access_notification_title" msgid="8933610618810588237">"নেপথ্যত অৱস্থানৰ এক্সেছ থকা এপ্‌সমূহ পৰ্যালোচনা কৰক"</string>
+    <string name="safety_center_background_location_access_reminder_notification_content" msgid="4066560182507301022">"<xliff:g id="APP_NAME">%s</xliff:g>এ যিকোনো সময়তে আপোনাৰ অৱস্থান এক্সেছ কৰিব পাৰে, আনকি এপ্‌টো বন্ধ থাকিলেও"</string>
+    <string name="safety_center_background_location_access_reminder_title" msgid="5477847038103863843">"নেপথ্যত অৱস্থানৰ এক্সেছ থকা এপ্‌সমূহ পৰ্যালোচনা কৰক"</string>
+    <string name="safety_center_background_location_access_reminder_summary" msgid="8276755741395332974">"এই এপ্‌টোৱে যিকোনো সময়তে আপোনাৰ অৱস্থান এক্সেছ কৰিব পাৰে, আনকি ই বন্ধ থাকিলেও।"</string>
+    <string name="safety_center_background_location_access_revoked" msgid="6972274943343442213">"এক্সেছ সলনি কৰা হৈছে"</string>
+    <string name="safety_center_view_recent_location_access" msgid="3524391299490678243">"শেহতীয়া অৱস্থানৰ ব্যৱহাৰ চাওক"</string>
+    <string name="privacy_controls_title" msgid="7605929972256835199">"গোপনীয়তাৰ নিয়ন্ত্ৰণ"</string>
+    <string name="camera_toggle_title" msgid="1251201397431837666">"কেমেৰাৰ এক্সেছ"</string>
+    <string name="mic_toggle_title" msgid="2649991093496110162">"মাইক্ৰ’ফ’নৰ এক্সেছ"</string>
+    <string name="perm_toggle_description" msgid="7801326363741451379">"এপ্‌ আৰু সেৱাৰ বাবে"</string>
+    <string name="mic_toggle_description" msgid="9163104307990677157">"এপ্‌ আৰু সেৱাৰ বাবে। এই ছেটিংটো অফ হৈ থাকিলে, আপুনি কোনো জৰুৰীকালীন নম্বৰত কল কৰিলে মাইক্ৰ’ফ’নৰ ডেটা তথাপি শ্বেয়াৰ কৰা হ’ব পাৰে।"</string>
+    <string name="location_settings_subtitle" msgid="2328360561197430695">"অৱস্থানৰ এক্সেছ থকা এপ্ আৰু সেৱাসমূহ চাওক"</string>
+    <string name="show_clip_access_notification_title" msgid="5168467637351109096">"ক্লিপব’ৰ্ডৰ এক্সেছ দেখুৱাওক"</string>
+    <string name="show_clip_access_notification_summary" msgid="3532020182782112687">"এপে আপুনি প্ৰতিলিপি কৰা পাঠ, প্ৰতিচ্ছবি অথবা অন্য সমল এক্সেছ কৰিলে এটা বাৰ্তা দেখুৱাওক"</string>
+    <string name="show_password_title" msgid="2877269286984684659">"পাছৱৰ্ডবোৰ দেখুৱাওক"</string>
+    <string name="show_password_summary" msgid="1110166488865981610">"আপুনি টাইপ কৰাৰ লগে লগে বৰ্ণসমূহ খন্তেকৰ বাবে দেখুৱাওক"</string>
 </resources>

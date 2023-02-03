@@ -21,7 +21,7 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import com.android.permissioncontroller.hibernation.HibernationJobService;
-import com.android.permissioncontroller.permission.service.v33.PermissionEventCleanupJobService;
+import com.android.permissioncontroller.permission.service.PermissionEventCleanupJobService;
 
 /**
  * App-global constants
@@ -65,20 +65,27 @@ public class Constants {
     public static final int NOTIFICATION_LISTENER_CHECK_JOB_ID = 5;
 
     /**
+     * ID for the periodic job in
+     * {@link com.android.permissioncontroller.privacysources.AccessibilitySourceService}.
+     */
+    public static final int PERIODIC_ACCESSIBILITY_CHECK_JOB_ID = 6;
+
+    /**
+     * ID for Safety Centers delayed job scheduled after boot and after Safety Center is enabled
+     *
+     * @see
+     * com.android.permissioncontroller.safetycenter.service.SafetyCenterBackgroundRefreshJobService
+     */
+    public static final int SAFETY_CENTER_BACKGROUND_REFRESH_JOB_ID = 7;
+
+
+    /**
      * Name of file to containing the packages we already showed a notification for.
      *
      * @see com.android.permissioncontroller.permission.service.LocationAccessCheck
      */
     public static final String LOCATION_ACCESS_CHECK_ALREADY_NOTIFIED_FILE =
             "packages_already_notified_location_access";
-
-    /**
-     * Name of file to containing the packages we already showed a notification for.
-     *
-     * @see com.android.permissioncontroller.privacysources.NotificationListenerCheck
-     */
-    public static final String NOTIFICATION_LISTENER_CHECK_ALREADY_NOTIFIED_FILE =
-            "packages_already_notified_notification_listener";
 
     /**
      * ID for notification shown by
@@ -103,6 +110,12 @@ public class Constants {
      * {@link com.android.permissioncontroller.privacysources.NotificationListenerCheck}.
      */
     public static final int NOTIFICATION_LISTENER_CHECK_NOTIFICATION_ID = 3;
+
+    /**
+     * ID for notification shown by
+     * {@link com.android.permissioncontroller.privacysources.AccessibilitySourceService}.
+     */
+    public static final int ACCESSIBILITY_CHECK_NOTIFICATION_ID = 4;
 
     /**
      * String action for navigating to the auto revoke screen.
@@ -228,6 +241,12 @@ public class Constants {
             "com.android.permissioncontroller.extra.SESSION_ID";
 
     /**
+     * Intent extra used to pass privacy source details to safety center.
+     */
+    public static final String EXTRA_PRIVACY_SOURCE =
+            "com.android.permissioncontroller.extra.PRIVACY_SOURCE";
+
+    /**
      * Invalid session id.
      */
     public static final long INVALID_SESSION_ID = 0;
@@ -255,6 +274,21 @@ public class Constants {
      * Package name of the Android platform.
      */
     public static final String OS_PACKAGE_NAME = "android";
+
+    /**
+     * Source id for safety center source for unused apps.
+     */
+    public static final String UNUSED_APPS_SAFETY_CENTER_SOURCE_ID = "AndroidPermissionAutoRevoke";
+
+    /**
+     * Issue id for safety center issue for unused apps.
+     */
+    public static final String UNUSED_APPS_SAFETY_CENTER_ISSUE_ID = "unused_apps_issue";
+
+    /**
+     * Action id for safety center "See unused apps" action.
+     */
+    public static final String UNUSED_APPS_SAFETY_CENTER_SEE_UNUSED_APPS_ID = "see_unused_apps";
 
     // TODO(b/231624295) add to API
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)

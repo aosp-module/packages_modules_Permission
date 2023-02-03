@@ -75,7 +75,6 @@ android_app {
     // artifact. See also b/209458854.
     sdk_version: "system_current",
     min_sdk_version: "30",
-    target_sdk_version: "32",
     updatable: true,
     privileged: true,
     certificate: "platform",
@@ -92,7 +91,7 @@ android_app {
     ],
 
     static_libs: [
-        "iconloader",
+        "iconloader_sc_mainline_prod",
         "com.google.android.material_material",
         "androidx.transition_transition",
         "androidx-constraintlayout_constraintlayout",
@@ -124,6 +123,7 @@ android_app {
         "SettingsLibActionBarShadow",
         "SettingsLibProgressBar",
         "SettingsLibCollapsingToolbarBaseActivity",
+        "SettingsLibActivityEmbedding",
         "SettingsLibSettingsTheme",
         "SettingsLibFooterPreference",
         "SettingsLibSelectorWithWidgetPreference",
@@ -132,8 +132,10 @@ android_app {
         "permissioncontroller-statsd",
         "car-ui-lib",
         "libprotobuf-java-lite",
+        "safety-center-internal-data",
         "SettingsLibUtils",
         "modules-utils-build_system",
+        "safety-center-resources-lib",
     ],
 
     proto: {
